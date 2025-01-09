@@ -14,3 +14,39 @@ export type ApiSearchResponse = {
   totalRecords: number;
   data: ApiFile[];
 };
+
+type EnqueuedFileStatus =
+  | "queued"
+  | "processing"
+  | "saving"
+  | "complete"
+  | "failed";
+
+export type EnqueuedFile = {
+  fileName: string;
+  jobId: string | number;
+  status: EnqueuedFileStatus;
+};
+
+export type FailedFiles = string[];
+
+export type UploadFilesApiResponse = {
+  message: string;
+  enqueuedFiles: EnqueuedFile[];
+};
+
+export type UploadFilesRequestResponseData =
+  | ({
+      success: true;
+    } & UploadFilesApiResponse)
+  | {
+      success: false;
+      message: string;
+      failedFiles?: FailedFiles;
+      enqueuedFiles?: EnqueuedFile[];
+    };
+
+export type JobStatusUpdateEventData = {
+  jobId: string | number;
+  status: EnqueuedFileStatus;
+};

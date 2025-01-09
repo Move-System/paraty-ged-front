@@ -18,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang='pt-br'>
       <body className={`${inter.className} antialiased bg-neutral-100`}>
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <div className='w-full max-w-[720px] mx-auto px-4'>{children}</div>
+        </NuqsAdapter>
       </body>
     </html>
   );

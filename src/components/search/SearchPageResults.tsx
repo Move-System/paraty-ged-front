@@ -1,14 +1,15 @@
 "use client";
 
-import { SEARCH_QUERY_PAGE_PARAM, SEARCH_QUERY_PARAM } from "@/config";
-import { getFilesRequest } from "@/services/requests";
-import { ApiFile } from "@/services/types";
+import { Suspense } from "react";
 import { useQueryState } from "nuqs";
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { getFilesRequest } from "@/services/requests";
 import ResultsPagination from "./ResultsPagination";
 import SearchResultItem from "./SearchResultItem";
+import { SEARCH_QUERY_PARAM, SEARCH_QUERY_PAGE_PARAM } from "@/config";
+import { ApiFile } from "@/services/types";
 
-export default function SearchPageResults() {
+const SearchPageResults = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery] = useQueryState(SEARCH_QUERY_PARAM);
   const [pageParam, setPageParam] = useQueryState(SEARCH_QUERY_PAGE_PARAM);
@@ -48,26 +49,26 @@ export default function SearchPageResults() {
 
   if (!searchQuery) return null;
   if (isLoading) {
-    return <p className='text-center'>Buscando documentos...</p>;
+    return <p className="text-center">Buscando documentos...</p>;
   }
 
   return (
-    <div className='h-full py-6 w-full'>
-      <div className='mb-8 text-center'>
-        <h3 className='font-semibold uppercase'>Resultados da busca</h3>
+    <div className="h-full py-6 w-full">
+      <div className="mb-8 text-center">
+        <h3 className="font-semibold uppercase">Resultados da busca</h3>
       </div>
       {!isLoading && (!searchResults || searchResults.length === 0) && (
-        <p className='text-center'>Nenhum documento encontrado</p>
+        <p className="text-center">Nenhum documento encontrado</p>
       )}
       {searchResults && searchResults.length !== 0 && (
-        <div className='flex flex-col gap-2'>
+        <div className="flex flex-col gap-2">
           {searchResults.map((file) => (
             <SearchResultItem item={file} key={file.id} />
           ))}
         </div>
       )}
       {totalPages && totalPages > 1 && (
-        <div className='py-4'>
+        <div className="py-4">
           <ResultsPagination
             activePage={currentPage}
             changePage={changeResultsPage}
@@ -77,4 +78,12 @@ export default function SearchPageResults() {
       )}
     </div>
   );
-}
+};
+
+const SuspenseWrapper = () => (
+  <Suspense fallback={<div>Carregando...</div>}>
+    <SearchPageResults />
+  </Suspense>
+);
+
+export default SuspenseWrapper;

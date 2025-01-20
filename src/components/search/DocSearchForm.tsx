@@ -1,12 +1,11 @@
-"use client";
-
+import { Suspense } from "react";
 import { useQueryState } from "nuqs";
 import { ChangeEventHandler, FormEvent, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { SEARCH_QUERY_PARAM } from "@/config";
 
-export default function DocSearchForm() {
+const DocSearchForm = () => {
   const [searchQuery, setSearchQuery] = useQueryState(SEARCH_QUERY_PARAM);
   const [searchInput, setSearchInput] = useState(searchQuery ?? "");
 
@@ -46,4 +45,13 @@ export default function DocSearchForm() {
       </div>
     </div>
   );
-}
+};
+
+// Envolva o componente com Suspense
+const SuspenseWrapper = () => (
+  <Suspense fallback={<div>Carregando...</div>}>
+    <DocSearchForm />
+  </Suspense>
+);
+
+export default SuspenseWrapper;

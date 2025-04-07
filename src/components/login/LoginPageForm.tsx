@@ -6,6 +6,15 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/Context/Auth/AuthContext";
+import { useState } from "react";
+import { AxiosError } from "axios";
+
+
+
+interface ApiErrorResponse {
+  message: string;
+}
 
 // Definindo o schema de validação
 const loginSchema = z.object({
@@ -20,6 +29,14 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPageForm() {
+
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const { login } = useAuth();
+  
+  
+
+
   const {
     register,
     handleSubmit,
@@ -32,13 +49,24 @@ export default function LoginPageForm() {
     }
   });
 
-  const onSubmit = (data: LoginFormData) => {
+  const onSubmit = async (data: LoginFormData) => {
+    setErrorMessage('');
     console.log('Dados do login:', data);
+  
     // Aqui você faria a chamada à API de login
+   try {
+  await login(data.email, data.password);
+} catch (error: unknown) {
+  const err = error as AxiosError<ApiErrorResponse>;
+
+  const message = err.response?.data?.message || "Erro ao fazer login";
+  setErrorMessage(message);
+  console.error(message);
+}
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen bg">
+    <div className="flex min-h-screen flex-col items-center justify-center w-full h-screen bg">
       <PageHeader />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center w-full">
         <div className="w-1/2">
@@ -67,6 +95,11 @@ export default function LoginPageForm() {
         <div className="w-1/2 mt-4">
           <a href="/auth/reset-password" className="text-sm text-gray-500 hover:underline hover:text-gray-600">Esqueceu sua senha?</a>
         </div>
+        {errorMessage && (
+  <div className="w-1/2 mt-4 text-left text-sm text-red-500">
+    {errorMessage}
+  </div>
+)}
 
         <Button 
           type="submit" 

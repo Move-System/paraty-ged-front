@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/Context/Auth/AuthContext";
 
 // Definindo o schema de validação
 const loginSchema = z.object({
@@ -15,11 +16,14 @@ const loginSchema = z.object({
   password: z.string()
     .min(1, { message: 'Senha é obrigatória' })
     .min(6, { message: 'Senha deve ter no mínimo 6 caracteres' }),
+  name: z.string()
+    .min(1, { message: 'Nome é obrigatório' })
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function SignInForm() {
+  const {SignIn} = useAuth();
   const {
     register,
     handleSubmit,
@@ -28,19 +32,37 @@ export default function SignInForm() {
     resolver: zodResolver(loginSchema),
     defaultValues: { // Adicionando valores padrão
       email: '',
-      password: ''
+      password: '',
+      name: ''
+      
     }
   });
 
-  const onSubmit = (data: LoginFormData) => {
+  const onSubmit =  async (data: LoginFormData) => {
     console.log('Dados do login:', data);
-    // Aqui você faria a chamada à API de login
+
+    try{
+      await SignIn(data.email, data.password, data.name);
+    }catch(error : unknown){
+      throw error
+    }
+
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen bg">
       <PageHeader />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center w-full">
+        <div className="w-1/2">
+          <Input 
+            placeholder="Nome" 
+            className="w-full mt-3 mb-1" 
+            {...register('name')} 
+          />
+          {errors.email && (
+            <span className="text-red-500 text-sm mb-3 block">{errors.email.message}</span>
+          )}
+        </div>
         <div className="w-1/2">
           <Input 
             placeholder="Email" 
@@ -69,7 +91,7 @@ export default function SignInForm() {
           className="w-1/2 mt-4" 
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Entrando...' : 'Cadastrar-se'}
+          {isSubmitting ? 'Cadastrando...' : 'Cadastrar-se'}
         </Button>
       </form>
     </div>

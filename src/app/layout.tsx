@@ -1,8 +1,8 @@
-
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
-import { NuqsAdapter } from "nuqs/adapters/next";
 import { Inter } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next";
 import { AuthProvider } from "@/Context/Auth/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -12,22 +12,16 @@ export const metadata: Metadata = {
   description: "Sistema de busca de documentos da Câmara Municipal de Paraty",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='pt-br'>
+    <html lang="pt-br">
       <body className={`${inter.className} antialiased bg-neutral-100`}>
         <NuqsAdapter>
           <AuthProvider>
-          <div className='w-full max-w-[720px] mx-auto px-4'>{children}</div>
+            {children}
           </AuthProvider>
         </NuqsAdapter>
       </body>
     </html>
   );
 }
-
-

@@ -6,8 +6,8 @@ export default function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white">
-      <h1 className="text-lg font-semibold">Câmara Municipal de Paraty</h1>
+    <header className="flex items-center justify-between px-4 py-2 bg-slate-950 text-slate-50 shadow">
+      <h1 className="text-lg  text-slate-50">Câmara Municipal de Paraty</h1>
       <div>
         {user ? (
           <>

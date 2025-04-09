@@ -50,3 +50,11 @@ export type JobStatusUpdateEventData = {
   jobId: string | number;
   status: EnqueuedFileStatus;
 };
+
+
+export type CreateUserDTO = {
+  name: string;
+  email: string;
+  password: string;
+  cargo: string;
+};

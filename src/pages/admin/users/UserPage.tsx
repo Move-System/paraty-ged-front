@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { UserList } from "@/components/users/userList";
+import { UserActionHeader } from "@/components/users/userActionHeader";
 
 
 export default function UserPage() {
@@ -14,10 +14,7 @@ export default function UserPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Topo */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Usuários</h1>
-        <Button>Novo Usuário</Button>
-      </div>
+      <UserActionHeader />
 
       {/* Campo de busca */}
       <div className="w-full max-w-sm">

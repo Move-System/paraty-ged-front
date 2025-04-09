@@ -6,6 +6,7 @@ interface User{
     name: string;
     email: string;
     role: string
+    active: boolean
 }
 
 interface Props{
@@ -22,6 +23,7 @@ export function UserTable({users}: Props) {
               <th className="px-4 py-2">Nome</th>
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Cargo</th>
+              <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2 text-right">Ações</th>
             </tr>
           </thead>

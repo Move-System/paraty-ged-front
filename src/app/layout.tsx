@@ -1,10 +1,12 @@
-// app/layout.tsx
+
+
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import { AuthProvider } from "@/Context/Auth/AuthContext";
 import { Providers } from "@/components/Providers";
+import {Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NuqsAdapter>
           <AuthProvider>
             {children}
+            <Toaster richColors position="top-right" />
           </AuthProvider>
         </NuqsAdapter>
         </Providers>

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import { AuthProvider } from "@/Context/Auth/AuthContext";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,11 +17,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-br">
       <body className={`${inter.className} antialiased bg-neutral-100`}>
+        <Providers>
         <NuqsAdapter>
           <AuthProvider>
             {children}
           </AuthProvider>
         </NuqsAdapter>
+        </Providers>
       </body>
     </html>
   );

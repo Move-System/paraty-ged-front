@@ -19,3 +19,13 @@ export const createUser = async (data: CreateUserDTO) => {
     const response = await api.post("/user", data);
     return response.data;
 };
+
+export const inactivateUser = async (id: number) => {
+    const response = await api.put(`/users/inactive/${id}`);
+    return response.data;
+};
+
+export const updateUser = async (id: number, data: CreateUserDTO) => {
+    const response = await api.put(`/user/${id}`, data);
+    return response.data;
+};

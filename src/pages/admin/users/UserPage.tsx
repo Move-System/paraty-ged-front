@@ -9,6 +9,7 @@ import { UserActionHeader } from "@/components/users/userActionHeader";
 export default function UserPage() {
   const [search, setSearch] = useState("");
 
+  
  
   
   return (
@@ -24,7 +25,7 @@ export default function UserPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-    <UserList />
+    <UserList search={search} />
     </div>
   );
 }

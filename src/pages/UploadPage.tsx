@@ -1,28 +1,26 @@
-"use client";
+// UploadPage.tsx
+'use client';
 
-import PageHeader from "@/components/PageHeader";
-import UploadErrorModal from "@/components/upload/UploadErrorModal";
-import { UploadPageQueueProps } from "@/components/upload/UploadPageQueue";
-import UploadPageForm from "@/components/upload/UploadPageForm";
-import { uploadFilesRequest } from "@/services/requests";
-import { useCallback, useState } from "react";
-import UploadPageQueue from "@/components/upload/UploadPageQueue";
-import { JobStatusUpdateEventData } from "@/services/types";
+import PageHeader from '@/components/PageHeader';
+import UploadErrorModal from '@/components/upload/UploadErrorModal';
+import UploadPageQueue, { UploadPageQueueProps } from '@/components/upload/UploadPageQueue';
+import UploadPageForm, { UploadFile } from '@/components/upload/UploadPageForm';
+import { uploadFilesRequest } from '@/services/requests';
+import { useCallback, useState } from 'react';
+import { JobStatusUpdateEventData } from '@/services/types';
 
 export default function UploadPage() {
-  const [enqueuedFiles, setEnqueuedFiles] = useState<
-    UploadPageQueueProps["enqueuedFiles"]
-  >([]);
+  const [enqueuedFiles, setEnqueuedFiles] = useState<UploadPageQueueProps['enqueuedFiles']>([]);
   const [uploadError, setUploadError] = useState<{
     message: string;
     failedFiles?: string[];
   } | null>(null);
 
-  const handleSubmit = useCallback(async (files: File[]) => {
+  const handleUpload = useCallback(async (files: UploadFile[]) => {
     try {
       const res = await uploadFilesRequest(files);
       if (res.enqueuedFiles) {
-        setEnqueuedFiles((current) => [...current, ...res.enqueuedFiles!]);
+        setEnqueuedFiles(current => [...current, ...res.enqueuedFiles!]);
       }
       if (!res.success) {
         setUploadError({
@@ -38,30 +36,26 @@ export default function UploadPage() {
   const updateEnqueuedFileStatus = useCallback(
     (data: JobStatusUpdateEventData) => {
       const files = [...enqueuedFiles];
-      const idx = files.findIndex((file) => file.jobId === data.jobId);
+      const idx = files.findIndex(file => file.jobId === data.jobId);
 
       if (idx === -1) return;
 
       files[idx].status = data.status;
       setEnqueuedFiles(files);
     },
-    [enqueuedFiles]
+    [enqueuedFiles],
   );
 
   return (
-    <div className='flex flex-col items-center justify-center w-full h-screen'>
+    <div className="flex flex-col items-center justify-center w-full h-screen">
       <PageHeader />
-      <UploadPageForm submitFiles={handleSubmit} />
+      <UploadPageForm onUpload={handleUpload} />
       <UploadPageQueue
         updateEnqueuedFileStatus={updateEnqueuedFileStatus}
         enqueuedFiles={enqueuedFiles}
       />
       {uploadError && (
-        <UploadErrorModal
-          isOpen
-          onClose={() => setUploadError(null)}
-          error={uploadError}
-        />
+        <UploadErrorModal isOpen onClose={() => setUploadError(null)} error={uploadError} />
       )}
     </div>
   );

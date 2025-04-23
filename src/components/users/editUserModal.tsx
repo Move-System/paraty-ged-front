@@ -1,7 +1,7 @@
 'use client';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { UserForm } from "./userForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { UserForm } from './userForm';
 
 interface Props {
   isOpen: boolean;
@@ -10,7 +10,7 @@ interface Props {
     id: number;
     name: string;
     email: string;
-    cargo: string;
+    role: string;
   };
 }
 
@@ -27,8 +27,8 @@ export default function EditUserModal({ isOpen, onOpenChange, user }: Props) {
           defaultValues={{
             name: user.name,
             email: user.email,
-            cargo: user.cargo,
-            password: "", // não necessário no update, mas exigido no schema
+            role: user.role,
+            password: '', // não necessário no update, mas exigido no schema
           }}
           onSuccess={() => onOpenChange(false)}
         />

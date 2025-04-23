@@ -1,13 +1,14 @@
-import { API_CONFIG } from "@/config";
-import { getApiClient } from "./apiClient";
+import { API_CONFIG } from '@/config';
+import { getApiClient } from './apiClient';
 import {
   ApiSearchResponse,
   EnqueuedFile,
   FailedFiles,
   UploadFilesApiResponse,
   UploadFilesRequestResponseData,
-} from "./types";
-import { isAxiosError } from "axios";
+} from './types';
+import { isAxiosError } from 'axios';
+import { UploadFile } from '@/components/upload/UploadPageForm';
 
 const client = getApiClient();
 
@@ -22,19 +23,20 @@ export const getFilesRequest = async (content: string, page?: number) => {
 };
 
 export const uploadFilesRequest = async (
-  files: File[]
+  files: UploadFile[],
 ): Promise<UploadFilesRequestResponseData> => {
   const formData = new FormData();
-
-  files.forEach((file) => {
-    formData.append("files", file);
+  // Anexa os arquivos de verdade
+  files.forEach(({ file }) => {
+    formData.append('files', file);
   });
 
+  // Anexa os títulos
+  const titles = files.map(({ title }) => title);
+  formData.append('titles', JSON.stringify(titles));
+
   try {
-    const { data } = await client.post<UploadFilesApiResponse>(
-      API_CONFIG.paths.upload,
-      formData
-    );
+    const { data } = await client.post<UploadFilesApiResponse>(API_CONFIG.paths.upload, formData);
     return {
       success: true,
       enqueuedFiles: data.enqueuedFiles,
@@ -45,9 +47,7 @@ export const uploadFilesRequest = async (
       throw e;
     }
 
-    const message =
-      (e.response.data.message as string) ??
-      "Ocorreu um erro ao subir os arquivos";
+    const message = (e.response.data.message as string) ?? 'Ocorreu um erro ao subir os arquivos';
 
     if (e.response.status === 503) {
       return {

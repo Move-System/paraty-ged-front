@@ -15,12 +15,7 @@ export type ApiSearchResponse = {
   data: ApiFile[];
 };
 
-type EnqueuedFileStatus =
-  | "queued"
-  | "processing"
-  | "saving"
-  | "complete"
-  | "failed";
+type EnqueuedFileStatus = 'queued' | 'processing' | 'saving' | 'complete' | 'failed';
 
 export type EnqueuedFile = {
   fileName: string;
@@ -51,10 +46,30 @@ export type JobStatusUpdateEventData = {
   status: EnqueuedFileStatus;
 };
 
-
 export type CreateUserDTO = {
   name: string;
   email: string;
+  password?: string;
+  role: string;
+};
+
+export type UpdateUserDTO = {
+  name: string;
+  email: string;
   password: string;
-  cargo: string;
+  role: string;
+};
+
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  active: boolean;
+};
+
+export type UserPaginationResponse = {
+  data: User[];
+  total: number;
+  totalPages: number;
 };

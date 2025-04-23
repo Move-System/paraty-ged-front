@@ -1,129 +1,106 @@
-"use client";
+// UploadComponent.tsx
+'use client';
 
-import { ChevronLeftIcon, UploadIcon } from "@radix-ui/react-icons";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { ChangeEvent, useState } from "react";
-import { LucideLoader2, Trash } from "lucide-react";
+import React, { useState, ChangeEvent } from 'react';
+import { Button } from '@/components/ui/button';
+import { LucideLoader2, Trash } from 'lucide-react';
+import { UploadIcon } from '@radix-ui/react-icons';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
-type Props = {
-  submitFiles: (files: File[]) => Promise<void>;
+export type UploadFile = {
+  file: File;
+  title: string;
+  // Campos adicionais futuros
 };
 
-export default function UploadPageForm({ submitFiles }: Props) {
-  const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+type Props = {
+  onUpload: (data: UploadFile[]) => Promise<void>;
+};
 
-  const handleSelectFiles = (e: ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.currentTarget;
-    if (!files || files.length === 0) {
-      setSelectedFiles(null);
-    } else {
-      setSelectedFiles(Array.from(files));
-    }
+export default function UploadPageForm({ onUpload }: Props) {
+  const [files, setFiles] = useState<UploadFile[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files ? Array.from(e.target.files) : [];
+    const newFiles = selected.map(file => ({
+      file,
+      title: file.name.replace(/\.[^/.]+$/, ''),
+    }));
+    setFiles(prev => [...prev, ...newFiles]);
   };
 
-  const removeSelectedFile = (file: File) => {
-    if (!selectedFiles) return;
-    const filtered = selectedFiles.filter(
-      (f) => f.name !== file.name && f.size !== file.size
-    );
-    if (!filtered || filtered.length === 0) {
-      setSelectedFiles(null);
-    } else {
-      setSelectedFiles(filtered);
-    }
+  const handleTitleChange = (index: number, title: string) => {
+    setFiles(prev => {
+      const updated = [...prev];
+      updated[index].title = title;
+      return updated;
+    });
   };
 
-  const handleSubmit = async () => {
-    if (!selectedFiles || selectedFiles.length === 0) return;
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpload = async () => {
+    if (files.length === 0) return;
+    setIsUploading(true);
     try {
-      setIsSubmitting(true);
-      await submitFiles(selectedFiles);
-      setSelectedFiles(null);
+      await onUpload(files);
+      setFiles([]);
     } catch (e) {
       console.error(e);
+      toast.error('Ocorreu um erro ao enviar os arquivos');
     } finally {
-      setIsSubmitting(false);
+      setIsUploading(false);
+      toast.success('Arquivos enviados com sucesso!');
     }
   };
 
   return (
-    <div className='py-6'>
-      <div className='bg-white p-4 rounded-md text-center shadow-sm w-full max-w-96'>
-        <div className='text-left'>
-          <p className='text-sm font-medium'>
-            Selecione arquivos para indexar na busca
-          </p>
-
-          <small className='text-gray-500 text-xs'>
-            <span className='text-red-500'>*</span> Apenas arquivos PDF, com no
-            máximo 25mb cada
-          </small>
+    <div className="w-full max-w-xl mx-auto space-y-4">
+      <div className="bg-white p-4 rounded shadow-md border">
+        <div className="mb-2">
+          <label htmlFor="file-input" className="flex items-center gap-2 cursor-pointer">
+            <UploadIcon /> <span>Selecionar arquivos (PDF)</span>
+          </label>
+          <input
+            id="file-input"
+            type="file"
+            className="hidden"
+            multiple
+            accept="application/pdf"
+            onChange={handleFileChange}
+          />
         </div>
-        <form className='mt-4'>
-          <div className='flex gap-2 justify-center'>
-            <Button variant='outline' asChild disabled>
-              <Link href='/' aria-disabled>
-                <ChevronLeftIcon /> Voltar
-              </Link>
-            </Button>
-            <Button asChild variant='secondary'>
-              <label htmlFor='file-input' className='hover:cursor-pointer'>
-                <UploadIcon /> Selecionar arquivos
-              </label>
+
+        {files.length > 0 && (
+          <div className="space-y-3">
+            {files.map((item, index) => (
+              <div key={index} className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
+                  <span>{item.file.name}</span>
+                  <Button size="icon" variant="ghost" onClick={() => removeFile(index)}>
+                    <Trash size={18} />
+                  </Button>
+                </div>
+                <Input
+                  value={item.title}
+                  onChange={e => handleTitleChange(index, e.target.value)}
+                  placeholder="Título do documento"
+                />
+                <Button size="icon" variant="ghost" onClick={() => removeFile(index)}>
+                  <Trash size={18} />
+                </Button>
+              </div>
+            ))}
+
+            <Button className="w-full mt-4" onClick={handleUpload} disabled={isUploading}>
+              {isUploading && <LucideLoader2 className="animate-spin mr-2" size={20} />}
+              Enviar arquivos
             </Button>
           </div>
-          <input
-            id='file-input'
-            name='file-input'
-            type='file'
-            className='hidden'
-            accept='application/pdf'
-            multiple
-            onChange={handleSelectFiles}
-          />
-        </form>
-
-        {selectedFiles && (
-          <>
-            <div className='mt-4 mb-2'>
-              <p className='text-sm text-left font-medium'>
-                Arquivos selecionados
-              </p>
-            </div>
-            <div className='border rounded-lg p-4'>
-              <div className='flex justify-start flex-col gap-2'>
-                {selectedFiles?.map((file) => (
-                  <div
-                    key={file.name}
-                    className='flex gap-2 justify-between items-center w-full'>
-                    <Button
-                      size='icon'
-                      variant='outline'
-                      className='text-xs'
-                      onClick={() => removeSelectedFile(file)}>
-                      <Trash />
-                    </Button>
-                    <div className='text-sm text-left text-ellipsis text-nowrap overflow-hidden grow flex-1'>
-                      {file.name}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className='mt-2 text-left'>
-              <Button
-                className='w-full'
-                disabled={isSubmitting}
-                onClick={handleSubmit}>
-                {isSubmitting && (
-                  <LucideLoader2 className='animate-spin' size={25} />
-                )}
-                Salvar
-              </Button>
-            </div>
-          </>
         )}
       </div>
     </div>

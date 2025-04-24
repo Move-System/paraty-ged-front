@@ -45,7 +45,7 @@ export default function DashboardPage() {
           </thead>
           <tbody>
             {data?.recentDocuments.map(
-              doc => (
+              (doc: { id: string; title: string; createdAt: Date; uploader: { name: string } }) => (
                 console.log(doc),
                 (
                   <tr key={doc.id} className="border-t hover:bg-slate-50">

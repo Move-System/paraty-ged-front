@@ -24,7 +24,7 @@ const createSchema = z.object({
     .email({ message: 'E-mail inválido' }),
   password: z.string().min(6, { message: 'Senha deve ter no mínimo 6 caracteres' }),
   role: z.string().min(1, { message: 'Role é obrigatório' }),
-  active: z.boolean(),
+  active: z.string().min(1, { message: 'Status é obrigatório' }),
 });
 
 const updateSchema = z.object({
@@ -35,7 +35,7 @@ const updateSchema = z.object({
     .email({ message: 'E-mail inválido' }),
   password: z.string().optional(),
   role: z.string().min(1, { message: 'Role é obrigatório' }),
-  active: z.boolean(),
+  active: z.string().min(1, { message: 'Status é obrigatório' }),
 });
 
 export function UserForm({ onSuccess, defaultValues, isEditing = false, userId }: Props) {
@@ -49,6 +49,7 @@ export function UserForm({ onSuccess, defaultValues, isEditing = false, userId }
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -78,10 +79,7 @@ export function UserForm({ onSuccess, defaultValues, isEditing = false, userId }
   }, [isEditing, userId, queryClient]);
 
   const onSubmit = (data: FormValues) => {
-    mutation.mutate({
-      ...data,
-      active: data.active === true,
-    });
+    mutation.mutate({ ...data });
   };
 
   return (
@@ -106,17 +104,16 @@ export function UserForm({ onSuccess, defaultValues, isEditing = false, userId }
           { label: 'Usuário', value: 'USER' },
         ]}
       />
+      {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
 
       <Select
-        {...register('active', {
-          setValueAs: v => v === 'true',
-        })}
+        {...register('active')}
         options={[
-          { label: 'Ativo', value: 'true' },
-          { label: 'Inativo', value: 'false' },
+          { label: 'Ativo', value: 'ACTIVE' },
+          { label: 'Inativo', value: 'INACTIVE' },
         ]}
       />
-      {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+      {errors.active && <p className="text-sm text-red-500">{errors.active.message}</p>}
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? (isEditing ? 'Salvando...' : 'Criando...') : 'Salvar'}

@@ -26,12 +26,13 @@ export const uploadFilesRequest = async (
   files: UploadFile[],
 ): Promise<UploadFilesRequestResponseData> => {
   const formData = new FormData();
-  // Anexa os arquivos de verdade
+
+  // Arquivos
   files.forEach(({ file }) => {
     formData.append('files', file);
   });
 
-  // Anexa os títulos
+  // Títulos
   const titles = files.map(({ title }) => title);
   formData.append('titles', JSON.stringify(titles));
 

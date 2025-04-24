@@ -29,34 +29,34 @@ export default function UploadPage() {
         });
       }
     } catch (e) {
-      console.log(e);
+      console.error('Erro ao fazer upload:', e);
     }
   }, []);
 
-  const updateEnqueuedFileStatus = useCallback(
-    (data: JobStatusUpdateEventData) => {
-      const files = [...enqueuedFiles];
-      const idx = files.findIndex(file => file.jobId === data.jobId);
-
-      if (idx === -1) return;
-
-      files[idx].status = data.status;
-      setEnqueuedFiles(files);
-    },
-    [enqueuedFiles],
-  );
+  const updateEnqueuedFileStatus = useCallback((data: JobStatusUpdateEventData) => {
+    setEnqueuedFiles(prev => {
+      const updated = [...prev];
+      const idx = updated.findIndex(file => file.jobId === data.jobId);
+      if (idx !== -1) {
+        updated[idx].status = data.status;
+      }
+      return updated;
+    });
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen">
-      <PageHeader />
-      <UploadPageForm onUpload={handleUpload} />
-      <UploadPageQueue
-        updateEnqueuedFileStatus={updateEnqueuedFileStatus}
-        enqueuedFiles={enqueuedFiles}
-      />
-      {uploadError && (
-        <UploadErrorModal isOpen onClose={() => setUploadError(null)} error={uploadError} />
-      )}
+    <div className="w-full min-h-screen px-4 py-6 flex flex-col items-center">
+      <div className="w-full max-w-4xl space-y-6">
+        <PageHeader />
+        <UploadPageForm onUpload={handleUpload} />
+        <UploadPageQueue
+          updateEnqueuedFileStatus={updateEnqueuedFileStatus}
+          enqueuedFiles={enqueuedFiles}
+        />
+        {uploadError && (
+          <UploadErrorModal isOpen onClose={() => setUploadError(null)} error={uploadError} />
+        )}
+      </div>
     </div>
   );
 }

@@ -1,17 +1,17 @@
 // UploadComponent.tsx
 'use client';
 
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { LucideLoader2, Trash } from 'lucide-react';
+import { LucideLoader2, Trash, ChevronDown, ChevronRight } from 'lucide-react';
 import { UploadIcon } from '@radix-ui/react-icons';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { useDropzone } from 'react-dropzone';
 
 export type UploadFile = {
   file: File;
   title: string;
-  // Campos adicionais futuros
 };
 
 type Props = {
@@ -21,15 +21,22 @@ type Props = {
 export default function UploadPageForm({ onUpload }: Props) {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files ? Array.from(e.target.files) : [];
-    const newFiles = selected.map(file => ({
+  const onDrop = (acceptedFiles: File[]) => {
+    const newFiles = acceptedFiles.map(file => ({
       file,
       title: file.name.replace(/\.[^/.]+$/, ''),
     }));
     setFiles(prev => [...prev, ...newFiles]);
   };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'application/pdf': ['.pdf'] },
+    multiple: true,
+  });
 
   const handleTitleChange = (index: number, title: string) => {
     setFiles(prev => {
@@ -46,59 +53,90 @@ export default function UploadPageForm({ onUpload }: Props) {
   const handleUpload = async () => {
     if (files.length === 0) return;
     setIsUploading(true);
+    setUploadProgress(0);
+
     try {
+      const interval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 150);
+      console.log('files', files);
       await onUpload(files);
       setFiles([]);
+      toast.success('Arquivos enviados com sucesso!');
     } catch (e) {
       console.error(e);
       toast.error('Ocorreu um erro ao enviar os arquivos');
     } finally {
-      setIsUploading(false);
-      toast.success('Arquivos enviados com sucesso!');
+      setTimeout(() => {
+        setIsUploading(false);
+        setUploadProgress(0);
+      }, 1500);
     }
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto space-y-4">
+    <div className="w-full max-w-2xl mx-auto space-y-4">
       <div className="bg-white p-4 rounded shadow-md border">
-        <div className="mb-2">
-          <label htmlFor="file-input" className="flex items-center gap-2 cursor-pointer">
-            <UploadIcon /> <span>Selecionar arquivos (PDF)</span>
-          </label>
-          <input
-            id="file-input"
-            type="file"
-            className="hidden"
-            multiple
-            accept="application/pdf"
-            onChange={handleFileChange}
-          />
+        <div
+          {...getRootProps()}
+          className={`p-4 border-2 border-dashed rounded cursor-pointer text-center ${isDragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300'}`}
+        >
+          <input {...getInputProps()} />
+          <UploadIcon className="inline-block mb-2" />
+          <p>{isDragActive ? 'Solte os arquivos aqui...' : ' clique para selecionar'}</p>
         </div>
 
         {files.length > 0 && (
-          <div className="space-y-3">
+          <div className="mt-4 space-y-3">
             {files.map((item, index) => (
-              <div key={index} className="flex items-start gap-2">
-                <div className="flex items-center gap-2">
-                  <span>{item.file.name}</span>
-                  <Button size="icon" variant="ghost" onClick={() => removeFile(index)}>
-                    <Trash size={18} />
-                  </Button>
+              <div key={index} className="rounded border shadow-sm bg-slate-50">
+                <div
+                  className="flex justify-between items-center px-3 py-2 cursor-pointer hover:bg-slate-100 transition"
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                >
+                  <p className="text-sm font-medium truncate">{item.file.name}</p>
+                  {openIndex === index ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                 </div>
-                <Input
-                  value={item.title}
-                  onChange={e => handleTitleChange(index, e.target.value)}
-                  placeholder="Título do documento"
-                />
-                <Button size="icon" variant="ghost" onClick={() => removeFile(index)}>
-                  <Trash size={18} />
-                </Button>
+                {openIndex === index && (
+                  <div className="border-t px-4 py-3 space-y-2 bg-white">
+                    <Input
+                      value={item.title}
+                      onChange={e => handleTitleChange(index, e.target.value)}
+                      placeholder="Título do documento"
+                    />
+                    <div className="flex justify-end">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => removeFile(index)}
+                        className="text-red-500 hover:bg-red-50"
+                      >
+                        <Trash size={18} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
 
+            {isUploading && (
+              <div className="w-full h-2 mt-4 bg-slate-200 rounded overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 transition-all duration-200"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            )}
+
             <Button className="w-full mt-4" onClick={handleUpload} disabled={isUploading}>
               {isUploading && <LucideLoader2 className="animate-spin mr-2" size={20} />}
-              Enviar arquivos
+              {isUploading ? 'Enviando...' : 'Enviar'}
             </Button>
           </div>
         )}

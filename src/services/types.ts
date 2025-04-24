@@ -65,7 +65,7 @@ export type User = {
   name: string;
   email: string;
   role: string;
-  active: boolean;
+  active: string;
 };
 
 export type UserPaginationResponse = {

@@ -14,7 +14,7 @@ interface Props {
     id: number;
     name: string;
     email: string;
-    cargo: string;
+    role: string;
   };
 }
 

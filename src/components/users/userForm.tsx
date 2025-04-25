@@ -11,7 +11,8 @@ import { useEffect, useMemo } from 'react';
 
 type Props = {
   onSuccess: () => void;
-  defaultValues?: never;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultValues?: any;
   isEditing?: boolean;
   userId?: number;
 };

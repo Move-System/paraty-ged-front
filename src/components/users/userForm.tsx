@@ -11,7 +11,7 @@ import { useEffect, useMemo } from 'react';
 
 type Props = {
   onSuccess: () => void;
-  defaultValues?: any;
+  defaultValues?: never;
   isEditing?: boolean;
   userId?: number;
 };
@@ -49,7 +49,6 @@ export function UserForm({ onSuccess, defaultValues, isEditing = false, userId }
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue,
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues,

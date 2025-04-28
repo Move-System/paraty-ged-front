@@ -1,12 +1,13 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { FileText, Users, Calendar } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardSummary } from '@/services/dashboardService';
 import { formatDateBR } from '@/lib/utils';
 import UploadsChart from './UploadsChart';
 
-export default function DashboardPage() {
+function DashboardPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard-summary'],
     queryFn: getDashboardSummary,
@@ -45,17 +46,17 @@ export default function DashboardPage() {
           </thead>
           <tbody>
             {data?.recentDocuments.map(
-              (doc: { id: string; title: string; createdAt: Date; uploader: { name: string } }) => (
-                console.log(doc),
-                (
-                  <tr key={doc.id} className="border-t hover:bg-slate-50">
-                    <td className="px-4 py-2">{doc.title}</td>
-                    <td className="px-4 py-2">{formatDateBR(doc.createdAt)}</td>
-                    <td className="px-4 py-2">
-                      {doc.uploader.name === null ? 'Desconhecido' : doc.uploader.name}
-                    </td>
-                  </tr>
-                )
+              (doc: {
+                id: string;
+                title: string;
+                createdAt: Date;
+                uploader: { name: string | null };
+              }) => (
+                <tr key={doc.id} className="border-t hover:bg-slate-50">
+                  <td className="px-4 py-2">{doc.title}</td>
+                  <td className="px-4 py-2">{formatDateBR(doc.createdAt)}</td>
+                  <td className="px-4 py-2">{doc.uploader?.name ?? 'Desconhecido'}</td>
+                </tr>
               ),
             )}
           </tbody>
@@ -65,7 +66,6 @@ export default function DashboardPage() {
   );
 }
 
-// Card Component
 function Card({ icon, title, value }: { icon: React.ReactNode; title: string; value: string }) {
   return (
     <div className="flex items-center gap-4 bg-white border rounded-lg p-4 shadow-sm">
@@ -77,3 +77,6 @@ function Card({ icon, title, value }: { icon: React.ReactNode; title: string; va
     </div>
   );
 }
+
+// exporta usando dynamic, desabilitando o SSR
+export default dynamic(() => Promise.resolve(DashboardPage), { ssr: false });

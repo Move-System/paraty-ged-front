@@ -8,6 +8,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { Button } from '../ui/button';
 import { UserPaginationResponse } from '@/services/types';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
 type Props = {
   search?: string;
@@ -64,3 +65,5 @@ export function UserList({ search }: Props) {
     </div>
   );
 }
+
+export const UserListDynamic = dynamic(() => Promise.resolve(UserList), { ssr: false });

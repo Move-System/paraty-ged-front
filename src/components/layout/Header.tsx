@@ -16,7 +16,7 @@ export default function Header() {
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button className="focus:outline-none">
-              <UserAvatar name={user.name} />
+              <UserAvatar name={user.name} showName={false} />
             </button>
           </DropdownMenu.Trigger>
 

@@ -1,9 +1,10 @@
 // src/components/ui/UserAvatar.tsx
 type UserAvatarProps = {
   name: string;
+  showName?: boolean;
 };
 
-export function UserAvatar({ name }: UserAvatarProps) {
+export function UserAvatar({ name, showName }: UserAvatarProps) {
   const initial = name?.charAt(0).toUpperCase() || '?';
 
   return (
@@ -11,7 +12,7 @@ export function UserAvatar({ name }: UserAvatarProps) {
       <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-sm font-medium text-slate-700 shadow">
         {initial}
       </div>
-      <span className="text-sm font-medium text-slate-900">{name}</span>
+      {showName ? <span>{name}</span> : null}
     </div>
   );
 }

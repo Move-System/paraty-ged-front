@@ -14,7 +14,7 @@ export function UserRow({ user }: { user: User }) {
   return (
     <tr className="border-t hover:bg-slate-50 transition-colors">
       <td className="px-4 py-2">
-        <UserAvatar name={user.name} />
+        <UserAvatar name={user.name} showName={true} />
       </td>
       <td className="px-4 py-2">{user.email}</td>
       <td className="px-4 py-2 ">{user.role === 'ADMIN' ? 'Administrador' : 'Usuário '}</td>

@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import { FileText, Users, Calendar } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardSummary } from '@/services/dashboardService';
-import { formatDateBR } from '@/lib/utils';
 import UploadsChart from './UploadsChart';
+import TableRecentDocuments from '@/components/dashboard/TableRecentDocuments';
 
 function DashboardPage() {
   const { data, isLoading } = useQuery({
@@ -32,36 +32,7 @@ function DashboardPage() {
       {data?.uploadsByDay && <UploadsChart data={data.uploadsByDay} />}
 
       {/* Mini tabela */}
-      <div className="border rounded-lg shadow-sm overflow-hidden">
-        <div className="bg-slate-900 text-white px-4 py-2 font-medium text-sm">
-          Documentos Recentes
-        </div>
-        <table className="w-full text-sm text-left">
-          <thead className="bg-slate-100">
-            <tr>
-              <th className="px-4 py-2">Título</th>
-              <th className="px-4 py-2">Data</th>
-              <th className="px-4 py-2">Usuário</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.recentDocuments.map(
-              (doc: {
-                id: string;
-                title: string;
-                createdAt: Date;
-                uploader: { name: string | null };
-              }) => (
-                <tr key={doc.id} className="border-t hover:bg-slate-50">
-                  <td className="px-4 py-2">{doc.title}</td>
-                  <td className="px-4 py-2">{formatDateBR(doc.createdAt)}</td>
-                  <td className="px-4 py-2">{doc.uploader?.name ?? 'Desconhecido'}</td>
-                </tr>
-              ),
-            )}
-          </tbody>
-        </table>
-      </div>
+      <TableRecentDocuments recentDocuments={data?.recentDocuments} />
     </div>
   );
 }

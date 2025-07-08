@@ -9,6 +9,19 @@ export type ApiFile = {
   updated_at: string;
 };
 
+export interface DocumetType {
+  id: number;
+  name: string;
+}
+
+export interface File {
+  id: string;
+  title: string;
+  createdAt: string;
+  uploader?: { name: string };
+  documentType?: { name: string };
+}
+
 export type ApiSearchResponse = {
   totalPages: number;
   totalRecords: number;

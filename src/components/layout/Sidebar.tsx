@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Search, Upload } from 'lucide-react';
+import { LayoutDashboard, Users, Search, Upload, FileText } from 'lucide-react';
 import PageHeader from '../PageHeader';
 
 export default function Sidebar() {
@@ -10,7 +10,7 @@ export default function Sidebar() {
 
   const links = [
     { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
-    // { href: '/admin/documentos', label: 'Documentos', icon: <FileText size={16} /> },
+    { href: '/admin/documentos', label: 'Documentos', icon: <FileText size={16} /> },
     // { href: "/admin/historico", label: "Histórico", icon: <History size={16} /> },
     { href: '/admin/usuarios', label: 'Usuários', icon: <Users size={16} /> },
     // { href: '/admin/configuracoes', label: 'Configurações', icon: <Settings size={16} /> },

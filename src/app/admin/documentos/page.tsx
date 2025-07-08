@@ -1,5 +1,8 @@
-import Home from '@/app/page';
+'use client';
 
-export default function SearchWrapper() {
-  return <Home />;
+export const dynamic = 'force-dynamic'; // 👈 FORÇA renderização no client
+
+import DocumentListPage from '@/components/documentos/DocumentosListPage';
+export default function Page() {
+  return <DocumentListPage />;
 }

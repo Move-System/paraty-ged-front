@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Suspense } from "react";
-import { useQueryState } from "nuqs";
-import { useState, useEffect, useCallback } from "react";
-import { getFilesRequest } from "@/services/requests";
-import ResultsPagination from "./ResultsPagination";
-import SearchResultItem from "./SearchResultItem";
-import { SEARCH_QUERY_PARAM, SEARCH_QUERY_PAGE_PARAM } from "@/config";
-import { ApiFile } from "@/services/types";
+import { Suspense } from 'react';
+import { useQueryState } from 'nuqs';
+import { useState, useEffect, useCallback } from 'react';
+import { getFilesRequest } from '@/services/requests';
+import ResultsPagination from './ResultsPagination';
+import SearchResultItem from './SearchResultItem';
+import { SEARCH_QUERY_PARAM, SEARCH_QUERY_PAGE_PARAM } from '@/config';
+import { ApiFile } from '@/services/types';
 
 const SearchPageResults = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +25,7 @@ const SearchPageResults = () => {
       const res = await getFilesRequest(searchQuery, page || undefined);
       setTotalPages(res.totalPages);
       setSearchResults(res.data);
+      console.log(res.data);
     } catch (e) {
       console.error(e);
     } finally {
@@ -37,7 +38,7 @@ const SearchPageResults = () => {
       setCurrentPage(page);
       setPageParam(String(page));
     },
-    [setPageParam]
+    [setPageParam],
   );
 
   useEffect(() => {
@@ -62,7 +63,7 @@ const SearchPageResults = () => {
       )}
       {searchResults && searchResults.length !== 0 && (
         <div className="flex flex-col gap-2">
-          {searchResults.map((file) => (
+          {searchResults.map(file => (
             <SearchResultItem item={file} key={file.id} />
           ))}
         </div>

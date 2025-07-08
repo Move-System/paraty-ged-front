@@ -7,6 +7,7 @@ export type ApiFile = {
   pages_content: string[];
   created_at: string;
   updated_at: string;
+  title: string;
 };
 
 export interface DocumetType {

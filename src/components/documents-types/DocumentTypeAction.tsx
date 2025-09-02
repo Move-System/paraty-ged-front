@@ -38,7 +38,8 @@ export default function DocumentTypeAction({ documentType }: Props) {
   };
 
   const handleDelete = () => {
-    mutation.mutate({ id: documentType.id });
+    console.log(documentType.id);
+    mutation.mutate(documentType.id as number);
     setIsOpen(false);
   };
 

@@ -12,13 +12,34 @@ import { UploadFile } from '@/components/upload/UploadPageForm';
 
 const client = getApiClient();
 
-export const getFilesRequest = async (content: string, page?: number) => {
+type SearchFilters = {
+  originalFileYear?: number;
+  documentTypeId?: number;
+};
+
+export const getFilesRequest = async (
+  content?: string, // torna opcional
+  page?: number, // número da página
+  filters: SearchFilters = {}, // filtros numéricos
+  opts?: { signal?: AbortSignal },
+) => {
+  // monta params só com o que existir
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: Record<string, any> = {};
+
+  const txt = content?.trim();
+  if (txt) params.content = txt;
+
+  if (typeof page === 'number') params.page = page;
+  if (typeof filters.originalFileYear === 'number')
+    params.originalFileYear = filters.originalFileYear;
+  if (typeof filters.documentTypeId === 'number') params.documentTypeId = filters.documentTypeId;
+
   const res = await client.get<ApiSearchResponse>(API_CONFIG.paths.search, {
-    params: {
-      content,
-      page,
-    },
+    params,
+    signal: opts?.signal, // opcional: permite cancelamento (AbortController)
   });
+
   return res.data;
 };
 

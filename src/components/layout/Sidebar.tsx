@@ -11,6 +11,8 @@ export default function Sidebar() {
   const links = [
     { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
     { href: '/admin/documentos', label: 'Documentos', icon: <FileText size={16} /> },
+    { href: '/admin/tipos-documentos', label: 'Tipos de Documentos', icon: <FileText size={16} /> },
+
     // { href: "/admin/historico", label: "Histórico", icon: <History size={16} /> },
     { href: '/admin/usuarios', label: 'Usuários', icon: <Users size={16} /> },
     // { href: '/admin/configuracoes', label: 'Configurações', icon: <Settings size={16} /> },

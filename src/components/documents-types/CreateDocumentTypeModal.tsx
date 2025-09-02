@@ -13,7 +13,7 @@ export default function CreateDocumentTypeModal({ isOpen, onOpenChange }: Props)
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Novo Usuário</DialogTitle>
+          <DialogTitle>Novo Tipo de Documento</DialogTitle>
         </DialogHeader>
         <DocumentTypeForm onSuccess={() => onOpenChange(false)} />
       </DialogContent>

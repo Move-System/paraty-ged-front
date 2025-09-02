@@ -22,3 +22,8 @@ export const updateDocumentType = async (id: number, data: DocumentType) => {
   const response = await api.put(`/document-types/${id}`, data);
   return response.data;
 };
+
+export const deleteDocumentType = async (id: number) => {
+  const response = await api.delete(`/document-types/${id}`);
+  return response.data;
+};

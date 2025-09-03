@@ -91,7 +91,7 @@ function DocSearchForm() {
   const yearOptions = useMemo(() => {
     const current = new Date().getFullYear();
     const years: number[] = [];
-    for (let y = current; y >= 1990; y--) years.push(y);
+    for (let y = current; y >= 1930; y--) years.push(y);
     return years;
   }, []);
 
